@@ -95,8 +95,20 @@ namespace MongodbApp.Services
         public async Task<ResponseModel<List<ProductResponseDto>>> GetAll()
         {
             var response = new ResponseModel<List<ProductResponseDto>>();
+            var productCodeList = new List<string> { "101", "102" }; 
 
-            var filterDefiniton = Builders<Product>.Filter.Empty;
+            //var filterDefiniton = Builders<Product>.Filter.Empty;
+            //var filterDefiniton = Builders<Product>.Filter.Gte(a=>a.Price, 50);
+            //var filterDefiniton = Builders<Product>.Filter.Lte(a=>a.Price, 50);
+            //var filterDefiniton = Builders<Product>.Filter.Lt(a=>a.Price, 50);
+            //var filterDefiniton = Builders<Product>.Filter.Gt(a=>a.Price, 50);
+            //var filterDefiniton = Builders<Product>.Filter.In(a=>a.ProductCode, productCodeList);
+            //var filterDefiniton = Builders<Product>.Filter.Nin(a=>a.ProductCode, productCodeList);
+            //var filterDefiniton = Builders<Product>.Filter.Ne(a=>a.ProductCode, "102") & 
+            //    Builders<Product>.Filter.Gt(a=> a.Price, 50);
+
+            var filterDefiniton = Builders<Product>.Filter.Ne(a => a.ProductCode, "102") |
+                Builders<Product>.Filter.Gt(a => a.Price, 50);
             var products = await productCollection.Find(filterDefiniton).ToListAsync();
             if (products.Count == 0)
             {
