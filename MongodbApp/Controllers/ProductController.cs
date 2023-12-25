@@ -38,11 +38,34 @@ namespace MongodbApp.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("/{productCode}/delete")]
+        [HttpDelete("{productCode}/delete")]
         public async Task<ActionResult> Delete(string productCode)
         {
             var result = await _productService.Delete(productCode);
 
+            return Ok(result);
+        }
+
+        [HttpPost("bulkInsert")]
+        public async Task<ActionResult> BulkInsert(IFormFile file)
+        {
+            var result = await _productService.BulkInsert(file);
+
+            return Ok(result);
+        }
+
+        [HttpPut("bulkUpdate")]
+        public async Task<ActionResult> BulkUpdate()
+        {
+            var result = await _productService.BulkUpdate();
+
+            return Ok(result);
+        }
+
+        [HttpDelete("bulkDelete")]
+        public async Task<ActionResult> BulkDelete()
+        {
+            var result = await _productService.BulkDelete();
             return Ok(result);
         }
     }

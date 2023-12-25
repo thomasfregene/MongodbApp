@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
 using MongodbApp.Contracts;
 using MongodbApp.Dtos;
 using MongodbApp.Models;
@@ -105,21 +106,86 @@ namespace MongodbApp.Services
             }
 
             var productsList = new List<ProductResponseDto>();
-            foreach (var item in products)
+            var prdlist = products.Select(a=>new ProductResponseDto
             {
-                productsList.Add(new ProductResponseDto
-                {
-                    ProductId = item.ProductId,
-                    ProductName = item.ProductName,
-                    Price = item.Price,
-                    ProductCode = item.ProductCode,
-                });
-            }
+                ProductId = a.ProductId,
+                ProductCode = a.ProductCode,
+                ProductName= a.ProductName,
+                Price = a.Price,
+            }).ToList();
+
+            //foreach (var item in products)
+            //{
+            //    productsList.Add(new ProductResponseDto
+            //    {
+            //        ProductId = item.ProductId,
+            //        ProductName = item.ProductName,
+            //        Price = item.Price,
+            //        ProductCode = item.ProductCode,
+            //    });
+            //}
 
             response.Code = "00";
             response.Message = $"Operation Successful";
-            response.Data = productsList;
+            response.Data = prdlist;
+            //response.Data = productsList;
+            return Task.FromResult(response).Result;
+        }
+
+        public async Task<ResponseModel<bool>> BulkInsert(IFormFile file)
+        {
+            var response = new ResponseModel<bool>();
+
+            var fileName = file.FileName;
+            if (!fileName.Contains("csv"))
+            {
+                response.Code = "99";
+                response.Message = $"Invalid file type";
+                response.Data = false;
+                return response;
+            }
+            var filePath = @"C:\Data\Products.csv";
+            var csvFile = await File.ReadAllLinesAsync(filePath);
+            var products = csvFile.Select(a => new Product
+            {
+                ProductName = a.Split(',')[0],
+                ProductCode = a.Split(",")[1],
+                Price = decimal.Parse(a.Split(",")[2]),
+            }).ToList();
+            await productCollection.InsertManyAsync(products);
+
+            response.Code = "00";
+            response.Message = $"Operation Successful";
+            response.Data = true;
             return response;
+        }
+
+        public async Task<ResponseModel<bool>> BulkUpdate()
+        {
+            var response = new ResponseModel<bool>();
+            var filterDefinition = Builders<Product>.Filter.Gte(a => a.Price, 90);
+            var updateDefinition = Builders<Product>.Update
+                .Set(a => a.Price, 300);
+
+            await productCollection.UpdateManyAsync(filterDefinition, updateDefinition);
+
+            response.Code = "00";
+            response.Message = $"Operation Successful";
+            response.Data = true;
+            return response;
+        }
+
+        public async Task<ResponseModel<bool>> BulkDelete()
+        {
+            
+            var filterDefinition = Builders<Product>.Filter.Eq(a => a.Price, 300);
+            await productCollection.DeleteManyAsync(filterDefinition);
+            return new ResponseModel<bool>
+            {
+                Code = "00",
+                Message = "Operation Successful",
+                Data = true
+            };
         }
     }
 }

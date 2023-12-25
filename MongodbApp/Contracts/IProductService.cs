@@ -9,5 +9,8 @@ namespace MongodbApp.Contracts
         Task<ResponseModel<bool>> Update(ProductDto product);
         Task<ResponseModel<bool>> Delete(string productCode);
         Task<ResponseModel<List<ProductResponseDto>>> GetAll();
+        Task<ResponseModel<bool>> BulkInsert(IFormFile file);
+        Task<ResponseModel<bool>> BulkUpdate();
+        Task<ResponseModel<bool>> BulkDelete();
     }
 }
