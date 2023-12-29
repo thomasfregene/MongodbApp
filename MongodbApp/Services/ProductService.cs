@@ -60,7 +60,11 @@ namespace MongodbApp.Services
             }
             var updateDefinition = Builders<Product>.Update
                 .Set(a => a.ProductName, productDto.ProductName)
-                .Set(a => a.Price, productDto.Price);
+                //.Set(a => a.Price, productDto.Price);
+                //.Inc(a => a.Price, productDto.Price); //increase current value by specified amount 
+                //.Mul(a => a.Price, productDto.Price); //multiple current value by specified amount 
+                //.Max(a => a.Price, productDto.Price); //checks specified amount if greater than current value then update 
+                .Min(a => a.Price, productDto.Price); //checks specified amount if less than current value then update 
 
             await productCollection.UpdateOneAsync(filterDefinition, updateDefinition);
 
@@ -192,6 +196,23 @@ namespace MongodbApp.Services
             
             var filterDefinition = Builders<Product>.Filter.Eq(a => a.Price, 300);
             await productCollection.DeleteManyAsync(filterDefinition);
+            return new ResponseModel<bool>
+            {
+                Code = "00",
+                Message = "Operation Successful",
+                Data = true
+            };
+        }
+
+        public async Task<ResponseModel<bool>> Upsert(ProductDto productDto)
+        {
+            //var response = new ResponseModel<bool>();
+            var filterDefinition = Builders<Product>.Filter.Eq(a => a.ProductCode, productDto.ProductCode);
+            var updateDefinition = Builders<Product>.Update
+                .Set(a => a.ProductName, productDto.ProductName)
+                .Set(a => a.Price, productDto.Price);
+            await productCollection.UpdateOneAsync(filterDefinition, updateDefinition, new UpdateOptions { IsUpsert = true});
+
             return new ResponseModel<bool>
             {
                 Code = "00",

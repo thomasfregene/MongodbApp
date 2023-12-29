@@ -12,5 +12,6 @@ namespace MongodbApp.Contracts
         Task<ResponseModel<bool>> BulkInsert(IFormFile file);
         Task<ResponseModel<bool>> BulkUpdate();
         Task<ResponseModel<bool>> BulkDelete();
+        Task<ResponseModel<bool>> Upsert(ProductDto productDto);
     }
 }

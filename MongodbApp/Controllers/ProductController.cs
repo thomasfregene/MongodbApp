@@ -68,5 +68,12 @@ namespace MongodbApp.Controllers
             var result = await _productService.BulkDelete();
             return Ok(result);
         }
+
+        [HttpPost("upsert")]
+        public async Task<ActionResult> Upsert(ProductDto productDto)
+        {
+            var result = await _productService.Upsert(productDto);
+            return Ok(result);
+        }
     }
 }
