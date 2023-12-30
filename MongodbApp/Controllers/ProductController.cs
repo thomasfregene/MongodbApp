@@ -75,5 +75,12 @@ namespace MongodbApp.Controllers
             var result = await _productService.Upsert(productDto);
             return Ok(result);
         }
+
+        [HttpPost("bulkwrite")]
+        public async Task<ActionResult> BulkWrite()
+        {
+            var result = await _productService.BulkWrite();
+            return Ok(result);
+        }
     }
 }
