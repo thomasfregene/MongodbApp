@@ -15,5 +15,7 @@ namespace MongodbApp.Contracts
         Task<ResponseModel<bool>> BulkDelete();
         Task<ResponseModel<bool>> Upsert(ProductDto productDto);
         Task<ResponseModel<bool>> BulkWrite();
+        Task<ResponseModel<ProductResponseDto>> GetById(string id);
+        Task<ResponseModel<bool>> CreateIndex();
     }
 }

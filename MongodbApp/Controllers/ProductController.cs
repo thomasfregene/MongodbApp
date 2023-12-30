@@ -82,5 +82,20 @@ namespace MongodbApp.Controllers
             var result = await _productService.BulkWrite();
             return Ok(result);
         }
+
+        [HttpGet("{id}/getbyid")]
+        public async Task<ActionResult> GetById(string id)
+        {
+            var result = await _productService.GetById(id);
+            return Ok(result);
+        }
+
+        [HttpPost("createindex")]
+        public async Task<ActionResult> CreateIndex()
+        {
+            var result = await _productService.CreateIndex();
+
+            return Ok(result);
+        }
     }
 }

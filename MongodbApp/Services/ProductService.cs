@@ -269,5 +269,60 @@ namespace MongodbApp.Services
                 Message = "Operation Successful"
             };
         }
+
+        public async Task<ResponseModel<ProductResponseDto>> GetById(string id)
+        {
+            //var filterDefinitions = Builders<Product>.Filter.Eq(a => a.ProductId, id);
+            var filterDefinitions = Builders<Product>.Filter.Eq(a => a.ProductCode, id);
+            var product = await productCollection.Find(filterDefinitions).FirstOrDefaultAsync();
+            if (product == null)
+            {
+                return new ResponseModel<ProductResponseDto>
+                {
+                    Code = "96",
+                    Message = "No record found for product id provided",
+                    Data = null
+                };
+            }
+
+            var productDto = new ProductResponseDto
+            {
+                Price = product.Price,
+                ProductCode = product.ProductCode,
+                ProductId = product.ProductId,
+                ProductName = product.ProductName
+            };
+
+
+            return new ResponseModel<ProductResponseDto>
+            {
+                Code = "00",
+                Message = "Operation Successful",
+                Data = productDto
+            };
+        }
+
+        public async Task<ResponseModel<bool>> CreateIndex()
+        {
+            var indexKeys = Builders<Product>.IndexKeys;
+            //var indexList = new List<CreateIndexModel<Product>>
+            //{
+            //    new CreateIndexModel<Product>(indexKeys.Ascending(a=>a.ProductCode), new CreateIndexOptions{Unique=true}),
+            //    new CreateIndexModel<Product>(indexKeys.Descending(a=>a.Price))
+            //};
+
+            //var indexModel = new CreateIndexModel<Product>(indexKeys.Ascending(a => a.ProductName));
+            var indexModel = new CreateIndexModel<Product>(indexKeys.Ascending(a => a.ProductName).Descending(a=>a.Price));
+
+            //await productCollection.Indexes.CreateManyAsync(indexList);
+            await productCollection.Indexes.CreateOneAsync(indexModel);
+
+            return new ResponseModel<bool>
+            {
+                Code = "00",
+                Message = "Operation Successful",
+                Data = true
+            };
+        }
     }
 }
