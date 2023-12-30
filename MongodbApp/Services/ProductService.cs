@@ -324,5 +324,33 @@ namespace MongodbApp.Services
                 Data = true
             };
         }
+
+        public async Task<ResponseModel<List<ProductResponseDto>>> LoadCursorData()
+        {
+            var filterDefinition = Builders<Product>.Filter.Empty;
+            var productList = new List<ProductResponseDto>();
+
+            using (var cursor = await productCollection.FindAsync(filterDefinition, new FindOptions<Product> { BatchSize = 100}))
+            {
+                while (await cursor.MoveNextAsync())
+                {
+                    var products = cursor.Current.ToList();
+                    productList = products.Select(a => new ProductResponseDto
+                    {
+                        ProductCode = a.ProductCode,
+                        Price = a.Price,
+                        ProductId = a.ProductId,
+                        ProductName = a.ProductName
+                    }).ToList();
+                }
+
+                return new ResponseModel<List<ProductResponseDto>>
+                {
+                    Code = "00",
+                    Message = "Operation Successful",
+                    Data = productList
+                };
+            }
+        }
     }
 }

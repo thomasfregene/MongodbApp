@@ -17,5 +17,6 @@ namespace MongodbApp.Contracts
         Task<ResponseModel<bool>> BulkWrite();
         Task<ResponseModel<ProductResponseDto>> GetById(string id);
         Task<ResponseModel<bool>> CreateIndex();
+        Task<ResponseModel<List<ProductResponseDto>>> LoadCursorData();
     }
 }

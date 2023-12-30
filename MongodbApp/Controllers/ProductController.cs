@@ -97,5 +97,13 @@ namespace MongodbApp.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("loadcursordata")]
+        public async Task<ActionResult> LoadCursorData()
+        {
+            var result = await _productService.LoadCursorData();
+
+            return Ok(result);
+        }
     }
 }
