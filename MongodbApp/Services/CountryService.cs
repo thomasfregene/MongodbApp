@@ -53,7 +53,7 @@ namespace MongodbApp.Services
         {
             var result = countryCollection.Aggregate()
                 .Lookup<Country, Province, CountryLookedUp>(provinceCollection, a=>a.CountryId, a=>a.CountryId, a=>a.ProvinceList)
-                .ToEnumerable()
+                .ToEnumerable() //to flaten the list
                 .SelectMany(a => a.ProvinceList.Select(b => new
                 {
                     a.CountryId,
