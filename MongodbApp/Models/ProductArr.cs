@@ -12,9 +12,15 @@ namespace MongodbApp.Models
         public string? ProductCode { get; set; }
         [BsonElement("product_name"), BsonRepresentation(BsonType.String)]
         public string? ProductName { get; set; }
+        [BsonElement("product_variant_list")]
+        public List<ProductVariant> ProductVariantList { get; set; }  = new List<ProductVariant>();
+    }
+
+    public class ProductVariant
+    {
         [BsonElement("price"), BsonRepresentation(BsonType.Decimal128)]
         public decimal Price { get; set; }
-        [BsonElement("colors")]
-        public List<string> Colors { get; set; } = new List<string>();
+        [BsonElement("color"), BsonRepresentation(BsonType.String)]
+        public string? Color { get; set; }
     }
 }

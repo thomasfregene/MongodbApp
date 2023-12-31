@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
+using MongodbApp.Models;
 
 namespace MongodbApp.Dtos
 {
@@ -8,7 +9,7 @@ namespace MongodbApp.Dtos
         public string? ProductCode { get; set; }
         public string? ProductName { get; set; }
         public decimal Price { get; set; }
-        public List<string> Colors { get; set; } = new List<string>();
+        public List<ProductVariant> ProductVariants { get; set; } = new List<ProductVariant>();
     }
 
     public class ProductArrUnwindResult 
@@ -19,10 +20,8 @@ namespace MongodbApp.Dtos
         public string? ProductCode { get; set; }
         [BsonElement("product_name"), BsonRepresentation(BsonType.String)]
         public string? ProductName { get; set; }
-        [BsonElement("price"), BsonRepresentation(BsonType.Decimal128)]
-        public decimal Price { get; set; }
-        [BsonElement("colors")]
-        public string? Colors { get; set; }
+        [BsonElement("product_variant_list")]
+        public ProductVariant? ProductVariant { get; set; }
     }
 
 }

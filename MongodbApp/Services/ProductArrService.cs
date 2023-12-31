@@ -28,20 +28,41 @@ namespace MongodbApp.Services
                 {
                     ProductCode = "001",
                     ProductName = "Product 001",
-                    Price = 50,
-                    Colors = new List<string>
+                    ProductVariantList = new List<ProductVariant>
                     {
-                        "Black", "White", "Red"
+                        new ProductVariant
+                        {
+                            Color = "Black",
+                            Price = 20
+                        },
+                        new ProductVariant
+                        {
+                            Color = "White",
+                            Price = 30
+                        },
+                        new ProductVariant
+                        {
+                            Color = "Blue",
+                            Price = 40
+                        }
                     }
                 },
                 new ProductArr
                 {
                     ProductCode = "002",
                     ProductName = "Product 002",
-                    Price = 90,
-                    Colors = new List<string>
+                   ProductVariantList = new List<ProductVariant>
                     {
-                        "Green", "Blue", "Yellow"
+                        new ProductVariant
+                        {
+                            Color = "Yellow",
+                            Price = 20
+                        },
+                        new ProductVariant
+                        {
+                            Color = "Purple",
+                            Price = 30
+                        }
                     }
                 }
             };
@@ -50,8 +71,14 @@ namespace MongodbApp.Services
             {
                 ProductCode = productArrDto.ProductCode,
                 ProductName = productArrDto.ProductName,
-                Price = productArrDto.Price,
-                Colors = productArrDto.Colors,
+                ProductVariantList = new List<ProductVariant>
+                {
+                    new ProductVariant
+                    {
+                        Color = "Yellow",
+                        Price = 20
+                    }
+                }
             };
 
             await productarrCollection.InsertManyAsync(productList);
@@ -78,7 +105,7 @@ namespace MongodbApp.Services
             };
         }
 
-        public async Task<ResponseModel<bool>> Update(ProductArrDto productArrDto)
+        /*public async Task<ResponseModel<bool>> Update(ProductArrDto productArrDto)
         {
             var filterDefinition = Builders<ProductArr>.Filter.Eq(a => a.ProductId, "65917e12dc1ecf220ff94fef");
             var colors = new List<string> { "Orange", "Purple" };
@@ -94,22 +121,33 @@ namespace MongodbApp.Services
                 Data = true,
             };
 
-        }
+        }*/
 
         public async Task<ResponseModel<dynamic>> UnWind()
         {
             var filterDefinition = Builders<ProductArr>.Filter.Eq(a => a.ProductCode, "001");
-            var result = await productarrCollection.Aggregate()
-                .Match(filterDefinition)
-                .Unwind<ProductArr, ProductArrUnwindResult>(a => a.Colors)
-                .ToListAsync();
+            var result = productarrCollection.Aggregate()
+                //.Match(filterDefinition)
+                .Unwind<ProductArr, ProductArrUnwindResult>(a => a.ProductVariantList)
+                .ToEnumerable()
+                .Select(a => new
+                {
+                    a.ProductId,
+                    a.ProductCode,
+                    a.ProductName,
+                    a.ProductVariant.Color,
+                    a.ProductVariant.Price
+                })
+                .ToList();
 
-            return new ResponseModel<dynamic>
+            var response = new ResponseModel<dynamic>
             {
                 Code = "00",
                 Message = "Operation Successful",
                 Data = result
             };
+
+            return  await Task.FromResult(response);
 
         }
     }

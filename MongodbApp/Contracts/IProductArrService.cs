@@ -7,7 +7,7 @@ namespace MongodbApp.Contracts
     {
         Task<ResponseModel<bool>> Create(ProductArrDto productArrDto);
         Task<ResponseModel<dynamic>> GetAll();
-        Task<ResponseModel<bool>> Update(ProductArrDto productArrDto);
+        //Task<ResponseModel<bool>> Update(ProductArrDto productArrDto);
         Task<ResponseModel<dynamic>> UnWind();
     }
 }

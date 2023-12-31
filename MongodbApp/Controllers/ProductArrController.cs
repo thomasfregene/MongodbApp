@@ -28,12 +28,12 @@ namespace MongodbApp.Controllers
             return Ok(result);
         }
 
-        [HttpPut("update")]
+        /*[HttpPut("update")]
         public async Task<ActionResult> Update(ProductArrDto productArrDto)
         {
             var result = await _productArrService.Update(productArrDto);
             return Ok(result);
-        }
+        }*/
 
         [HttpGet("unwind")]
         public async Task<ActionResult> Unwind()
